@@ -3,6 +3,7 @@ import sceneMorning from '@/assets/scene-morning.png';
 import sceneDay from '@/assets/scene-day.png';
 import sceneEvening from '@/assets/scene-evening.png';
 import sceneNight from '@/assets/scene-night.png';
+import InfoBox from './InfoBox';
 
 type TimeOfDay = 'morning' | 'day' | 'evening' | 'night';
 
@@ -23,35 +24,45 @@ function getTimeOfDay(): TimeOfDay {
 }
 
 function shouldShowSurprise(): boolean {
-  // ~10% chance of a surprise on each visit
   return Math.random() < 0.1;
 }
+
+// ✨ Hier deinen persönlichen Text einfügen:
+const INFO_TEXT = `Hallo meine Liebe! 🐼
+
+Dieser kleine Panda ist nur für dich. 
+Er lebt in seinem Dschungel und wartet 
+jeden Tag darauf, dich zu sehen.
+
+Schau einfach vorbei, wann immer du 
+möchtest – morgens, mittags oder nachts. 
+Er ist immer da.
+
+Mit ganz viel Liebe für dich gemacht. ❤️`;
 
 export default function PixelScene() {
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>(getTimeOfDay);
   const [showSurprise, setShowSurprise] = useState(false);
   const [tapped, setTapped] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
 
   useEffect(() => {
-    // Check time every minute
     const interval = setInterval(() => {
       setTimeOfDay(getTimeOfDay());
     }, 60000);
 
-    // Decide on surprise at load
     setShowSurprise(shouldShowSurprise());
 
     return () => clearInterval(interval);
   }, []);
 
   const handleTap = useCallback(() => {
-    if (!tapped) {
+    if (!tapped && !showInfo) {
       setTapped(true);
-      // Reset after animation
       setTimeout(() => setTapped(false), 600);
     }
-  }, [tapped]);
+  }, [tapped, showInfo]);
 
   const currentScene = scenes[timeOfDay];
   const isNight = timeOfDay === 'night';
@@ -98,7 +109,40 @@ export default function PixelScene() {
             />
           </div>
         )}
+
+        {/* Info Button */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowInfo(true);
+          }}
+          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-card/80 backdrop-blur-sm border-2 border-border/50 flex items-center justify-center text-foreground/70 hover:text-foreground hover:bg-card transition-all duration-300 hover:scale-110 z-10"
+          aria-label="Info"
+        >
+          <svg 
+            width="20" 
+            height="20" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 16v-4"/>
+            <path d="M12 8h.01"/>
+          </svg>
+        </button>
       </div>
+
+      {/* Info Box Overlay */}
+      <InfoBox 
+        isOpen={showInfo} 
+        onClose={() => setShowInfo(false)} 
+        text={INFO_TEXT}
+        timeOfDay={timeOfDay}
+      />
     </div>
   );
 }
