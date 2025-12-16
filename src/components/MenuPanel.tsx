@@ -10,26 +10,10 @@ interface MenuPanelProps {
 }
 
 const timeColors: Record<TimeOfDay, { bg: string; border: string; accent: string }> = {
-  morning: {
-    bg: 'bg-amber-50/95',
-    border: 'border-amber-200/50',
-    accent: 'text-amber-700',
-  },
-  day: {
-    bg: 'bg-emerald-50/95',
-    border: 'border-emerald-200/50',
-    accent: 'text-emerald-700',
-  },
-  evening: {
-    bg: 'bg-orange-50/95',
-    border: 'border-orange-200/50',
-    accent: 'text-orange-700',
-  },
-  night: {
-    bg: 'bg-indigo-950/95',
-    border: 'border-indigo-400/30',
-    accent: 'text-indigo-300',
-  },
+  morning: { bg: 'bg-amber-50/95', border: 'border-amber-200/50', accent: 'text-amber-700' },
+  day: { bg: 'bg-emerald-50/95', border: 'border-emerald-200/50', accent: 'text-emerald-700' },
+  evening: { bg: 'bg-orange-50/95', border: 'border-orange-200/50', accent: 'text-orange-700' },
+  night: { bg: 'bg-indigo-950/95', border: 'border-indigo-400/30', accent: 'text-indigo-300' },
 };
 
 export default function MenuPanel({ isOpen, onClose, onShowMessage, timeOfDay }: MenuPanelProps) {
@@ -66,17 +50,25 @@ export default function MenuPanel({ isOpen, onClose, onShowMessage, timeOfDay }:
 
         {/* Menu items */}
         <div className="space-y-3">
+          {/* Bestehender Button */}
           <button
-            onClick={() => {
-              onShowMessage();
-              onClose();
-            }}
+            onClick={() => { onShowMessage(); onClose(); }}
             className={`w-full flex items-center gap-3 p-4 rounded-2xl transition-all duration-200 ${isNight ? 'bg-indigo-800/40 hover:bg-indigo-700/50 text-indigo-100' : 'bg-white/60 hover:bg-white/80 text-gray-700'}`}
           >
             <Heart className={colors.accent} size={22} />
             <span className="font-medium">Wiadomość dla Ciebie</span>
           </button>
 
+          {/* Neuer J+J Button */}
+          <button
+            onClick={() => { window.location.href = "/jj"; onClose(); }}
+            className={`w-full flex items-center gap-3 p-4 rounded-2xl transition-all duration-200 ${isNight ? 'bg-indigo-800/40 hover:bg-indigo-700/50 text-indigo-100' : 'bg-white/60 hover:bg-white/80 text-gray-700'}`}
+          >
+            <Info className={colors.accent} size={22} />
+            <span className="font-medium">J+J</span>
+          </button>
+
+          {/* Info Box */}
           <div className={`p-4 rounded-2xl ${isNight ? 'bg-indigo-800/30 text-indigo-200' : 'bg-white/40 text-gray-600'}`}>
             <div className="flex items-center gap-3 mb-2">
               <Info className={colors.accent} size={22} />
