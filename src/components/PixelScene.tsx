@@ -1,9 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Menu } from 'lucide-react';
 import sceneMorning from '@/assets/scene-morning.png';
 import sceneDay from '@/assets/scene-day.png';
 import sceneEvening from '@/assets/scene-evening.png';
 import sceneNight from '@/assets/scene-night.png';
 import InfoBox from './InfoBox';
+import SpeechBubble from './SpeechBubble';
+import MenuPanel from './MenuPanel';
 
 type TimeOfDay = 'morning' | 'day' | 'evening' | 'night';
 
@@ -27,18 +30,18 @@ function shouldShowSurprise(): boolean {
   return Math.random() < 0.1;
 }
 
-// ✨ Hier deinen persönlichen Text einfügen:
-const INFO_TEXT = `Hallo meine Liebe! 🐼
+// ✨ Tutaj wpisz swoją osobistą wiadomość:
+const INFO_TEXT = `Cześć Kochana! 🐼
 
-Dieser kleine Panda ist nur für dich. 
-Er lebt in seinem Dschungel und wartet 
-jeden Tag darauf, dich zu sehen.
+Ta mała panda jest tylko dla Ciebie.
+Mieszka w swojej dżungli i codziennie
+czeka, żeby Cię zobaczyć.
 
-Schau einfach vorbei, wann immer du 
-möchtest – morgens, mittags oder nachts. 
-Er ist immer da.
+Wpadaj kiedy tylko chcesz –
+rano, w południe lub w nocy.
+Balu zawsze tu jest.
 
-Mit ganz viel Liebe für dich gemacht. ❤️`;
+Zrobione z wielką miłością dla Ciebie. ❤️`;
 
 export default function PixelScene() {
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>(getTimeOfDay);
@@ -46,6 +49,7 @@ export default function PixelScene() {
   const [tapped, setTapped] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -58,11 +62,11 @@ export default function PixelScene() {
   }, []);
 
   const handleTap = useCallback(() => {
-    if (!tapped && !showInfo) {
+    if (!tapped && !showInfo && !showMenu) {
       setTapped(true);
       setTimeout(() => setTapped(false), 600);
     }
-  }, [tapped, showInfo]);
+  }, [tapped, showInfo, showMenu]);
 
   const currentScene = scenes[timeOfDay];
   const isNight = timeOfDay === 'night';
@@ -83,7 +87,7 @@ export default function PixelScene() {
         {/* Main scene image */}
         <img
           src={currentScene}
-          alt=""
+          alt="Balu the Panda"
           className={`
             w-full h-full object-cover pixel-perfect
             ${loaded ? 'animate-scene-fade' : 'opacity-0'}
@@ -92,6 +96,9 @@ export default function PixelScene() {
           onLoad={() => setLoaded(true)}
           draggable={false}
         />
+
+        {/* Speech Bubble */}
+        {loaded && <SpeechBubble timeOfDay={timeOfDay} />}
 
         {/* Fireflies overlay for night */}
         {isNight && <Fireflies />}
@@ -110,31 +117,26 @@ export default function PixelScene() {
           </div>
         )}
 
-        {/* Info Button */}
+        {/* Menu Button - Modern Design */}
         <button
           onClick={(e) => {
             e.stopPropagation();
-            setShowInfo(true);
+            setShowMenu(true);
           }}
-          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-card/80 backdrop-blur-sm border-2 border-border/50 flex items-center justify-center text-foreground/70 hover:text-foreground hover:bg-card transition-all duration-300 hover:scale-110 z-10"
-          aria-label="Info"
+          className="absolute top-4 right-4 w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/90 to-primary/70 backdrop-blur-sm shadow-lg flex items-center justify-center text-primary-foreground hover:scale-105 active:scale-95 transition-all duration-200 z-10"
+          aria-label="Menu"
         >
-          <svg 
-            width="20" 
-            height="20" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round"
-          >
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M12 16v-4"/>
-            <path d="M12 8h.01"/>
-          </svg>
+          <Menu size={24} />
         </button>
       </div>
+
+      {/* Menu Panel */}
+      <MenuPanel 
+        isOpen={showMenu}
+        onClose={() => setShowMenu(false)}
+        onShowMessage={() => setShowInfo(true)}
+        timeOfDay={timeOfDay}
+      />
 
       {/* Info Box Overlay */}
       <InfoBox 
