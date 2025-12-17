@@ -134,11 +134,10 @@ export default function PixelScene() {
           <Menu size={24} />
         </button>
 
-        {/* Streichel-Button unten */}
+        {/* Streichel-Button rechts mittig */}
         <button
           onClick={handlePet}
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white text-black p-3 rounded-full shadow-md flex items-center justify-center z-20 hover:bg-gray-100 transition"
-          style={{ pointerEvents: 'auto' }}
+          className="absolute top-1/2 right-4 -translate-y-1/2 bg-white text-black p-3 rounded-full shadow-md flex items-center justify-center z-20 hover:bg-gray-100 transition"
           title={`Gestreichelt: ${petCount} mal`}
         >
           🐼 <span className="ml-1 text-sm font-bold">{petCount}</span>
