@@ -79,9 +79,9 @@ export default function PixelScene() {
   const isNight = timeOfDay === 'night';
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center bg-[hsl(var(--scene-border))]">
-      {/* Scene Container – 9:16 mobile safe */}
-      <div className="relative h-full aspect-[9/16] max-w-full overflow-hidden">
+    <div className="relative w-full h-full flex items-center justify-center bg-[hsl(var(--background))]">
+      {/* Scene Container – Fullscreen */}
+      <div className="relative w-full h-full overflow-hidden">
         {/* Scene Image */}
         <img
           src={currentScene}

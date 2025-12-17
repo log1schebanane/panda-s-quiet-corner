@@ -6,7 +6,7 @@
 CSS Variables
 ========================= */
 :root {
-  --scene-border: 0 0% 2%;
+  --scene-border: 0 0% 0%; /* Schwarz-Rahmen entfernt */
   --background: 0 0% 4%;
   --foreground: 45 20% 90%;
 
@@ -24,7 +24,7 @@ CSS Variables
     height: 100%;
     margin: 0;
     padding: 0;
-    background: hsl(var(--scene-border));
+    background: hsl(var(--background));
     overflow: hidden;
     overscroll-behavior: none;
   }
@@ -37,7 +37,7 @@ CSS Variables
     flex-direction: column;
     overflow: hidden;
     position: relative;
-    background: hsl(var(--scene-border));
+    background: hsl(var(--background));
   }
 
   /* Safe-Area Filler für iOS */
@@ -47,7 +47,7 @@ CSS Variables
     position: fixed;
     left: 0;
     right: 0;
-    background: hsl(var(--scene-border));
+    background: hsl(var(--background));
     z-index: -1;
   }
 
@@ -73,7 +73,7 @@ CSS Variables
   height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: hsl(var(--scene-border));
+  background: hsl(var(--background));
   overflow: hidden;
 }
 
