@@ -16,12 +16,6 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        {/* Einfaches Menü */}
-        <nav className="flex gap-4 p-4 bg-gray-100">
-          <Link to="/">Home</Link>
-          <Link to="/jj">J+J</Link>
-        </nav>
-
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/jj" element={<JJPage />} />  {/* Neue Seite */}

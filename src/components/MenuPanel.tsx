@@ -1,4 +1,5 @@
 import { X, Heart, Info } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 type TimeOfDay = 'morning' | 'day' | 'evening' | 'night';
 
@@ -10,15 +11,32 @@ interface MenuPanelProps {
 }
 
 const timeColors: Record<TimeOfDay, { bg: string; border: string; accent: string }> = {
-  morning: { bg: 'bg-amber-50/95', border: 'border-amber-200/50', accent: 'text-amber-700' },
-  day: { bg: 'bg-emerald-50/95', border: 'border-emerald-200/50', accent: 'text-emerald-700' },
-  evening: { bg: 'bg-orange-50/95', border: 'border-orange-200/50', accent: 'text-orange-700' },
-  night: { bg: 'bg-indigo-950/95', border: 'border-indigo-400/30', accent: 'text-indigo-300' },
+  morning: {
+    bg: 'bg-amber-50/95',
+    border: 'border-amber-200/50',
+    accent: 'text-amber-700',
+  },
+  day: {
+    bg: 'bg-emerald-50/95',
+    border: 'border-emerald-200/50',
+    accent: 'text-emerald-700',
+  },
+  evening: {
+    bg: 'bg-orange-50/95',
+    border: 'border-orange-200/50',
+    accent: 'text-orange-700',
+  },
+  night: {
+    bg: 'bg-indigo-950/95',
+    border: 'border-indigo-400/30',
+    accent: 'text-indigo-300',
+  },
 };
 
 export default function MenuPanel({ isOpen, onClose, onShowMessage, timeOfDay }: MenuPanelProps) {
   const colors = timeColors[timeOfDay];
   const isNight = timeOfDay === 'night';
+  const navigate = useNavigate();
 
   if (!isOpen) return null;
 
@@ -50,21 +68,27 @@ export default function MenuPanel({ isOpen, onClose, onShowMessage, timeOfDay }:
 
         {/* Menu items */}
         <div className="space-y-3">
-          {/* Bestehender Button */}
+          {/* Nachricht */}
           <button
-            onClick={() => { onShowMessage(); onClose(); }}
+            onClick={() => {
+              onShowMessage();
+              onClose();
+            }}
             className={`w-full flex items-center gap-3 p-4 rounded-2xl transition-all duration-200 ${isNight ? 'bg-indigo-800/40 hover:bg-indigo-700/50 text-indigo-100' : 'bg-white/60 hover:bg-white/80 text-gray-700'}`}
           >
             <Heart className={colors.accent} size={22} />
             <span className="font-medium">Wiadomość dla Ciebie</span>
           </button>
 
-          {/* Neuer J+J Button */}
+          {/* J+J Seite */}
           <button
-            onClick={() => { window.location.href = "/jj"; onClose(); }}
+            onClick={() => {
+              navigate("/jj"); // öffnet die J+J-Seite
+              onClose();
+            }}
             className={`w-full flex items-center gap-3 p-4 rounded-2xl transition-all duration-200 ${isNight ? 'bg-indigo-800/40 hover:bg-indigo-700/50 text-indigo-100' : 'bg-white/60 hover:bg-white/80 text-gray-700'}`}
           >
-            <Info className={colors.accent} size={22} />
+            <Heart className={colors.accent} size={22} />
             <span className="font-medium">J+J</span>
           </button>
 

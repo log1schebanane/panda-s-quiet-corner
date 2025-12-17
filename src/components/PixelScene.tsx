@@ -19,7 +19,6 @@ const scenes: Record<TimeOfDay, string> = {
 
 function getTimeOfDay(): TimeOfDay {
   const hour = new Date().getHours();
-  
   if (hour >= 6 && hour < 11) return 'morning';
   if (hour >= 11 && hour < 17) return 'day';
   if (hour >= 17 && hour < 21) return 'evening';
@@ -30,18 +29,16 @@ function shouldShowSurprise(): boolean {
   return Math.random() < 0.1;
 }
 
-// ✨ Tutaj wpisz swoją osobistą wiadomość:
-const INFO_TEXT = `Cześć Kochana! 🐼
+const INFO_TEXT = `Prezent dla Ciebie 🐼
+Das ist dein Geschenk zu Weihnachten od Kubi dla Juli.
 
-Ta mała panda jest tylko dla Ciebie.
-Mieszka w swojej dżungli i codziennie
-czeka, żeby Cię zobaczyć.
+Dieser kleine Panda ist nur für dich.
+Er wohnt in seinem Dschungel und wartet jeden Tag darauf,
+dich zu sehen 🤍
 
-Wpadaj kiedy tylko chcesz –
-rano, w południe lub w nocy.
-Balu zawsze tu jest.
-
-Zrobione z wielką miłością dla Ciebie. ❤️`;
+Komm vorbei wann immer du willst –
+morgens, mittags oder nachts.
+Balu ist immer hier.`;
 
 export default function PixelScene() {
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>(getTimeOfDay);
@@ -50,6 +47,11 @@ export default function PixelScene() {
   const [loaded, setLoaded] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [petReaction, setPetReaction] = useState(false);
+  const [petCount, setPetCount] = useState<number>(() => {
+    const saved = localStorage.getItem('petCount');
+    return saved ? parseInt(saved, 10) : 0;
+  });
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -57,34 +59,30 @@ export default function PixelScene() {
     }, 60000);
 
     setShowSurprise(shouldShowSurprise());
-
     return () => clearInterval(interval);
   }, []);
 
-  const handleTap = useCallback(() => {
-    if (!tapped && !showInfo && !showMenu) {
-      setTapped(true);
-      setTimeout(() => setTapped(false), 600);
-    }
-  }, [tapped, showInfo, showMenu]);
+  const handlePet = useCallback(() => {
+    setTapped(true);
+    setPetReaction(true);
+    setPetCount((prev) => {
+      const next = prev + 1;
+      localStorage.setItem('petCount', next.toString());
+      return next;
+    });
+
+    setTimeout(() => setTapped(false), 600);
+    setTimeout(() => setPetReaction(false), 900);
+  }, []);
 
   const currentScene = scenes[timeOfDay];
   const isNight = timeOfDay === 'night';
 
   return (
     <div className="relative w-full h-full flex items-center justify-center bg-[hsl(var(--scene-border))]">
-      {/* Scene container - 9:16 aspect ratio */}
-      <div 
-        className="relative overflow-hidden"
-        style={{
-          aspectRatio: '9/16',
-          maxHeight: '100vh',
-          maxWidth: 'calc(100vh * 9 / 16)',
-          width: '100%',
-        }}
-        onClick={handleTap}
-      >
-        {/* Main scene image */}
+      {/* Scene Container – 9:16 mobile safe */}
+      <div className="relative h-full aspect-[9/16] max-w-full overflow-hidden">
+        {/* Scene Image */}
         <img
           src={currentScene}
           alt="Balu the Panda"
@@ -97,51 +95,68 @@ export default function PixelScene() {
           draggable={false}
         />
 
+        {/* ❤️ Herz-Reaktion beim Streicheln */}
+        {petReaction && (
+          <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+            <div className="text-4xl animate-scale-in select-none">❤️</div>
+          </div>
+        )}
+
         {/* Speech Bubble */}
         {loaded && <SpeechBubble timeOfDay={timeOfDay} />}
 
-        {/* Fireflies overlay for night */}
+        {/* Fireflies (Night only) */}
         {isNight && <Fireflies />}
 
-        {/* Rare surprise shimmer overlay */}
+        {/* Rare shimmer */}
         {showSurprise && (
           <div className="absolute inset-0 pointer-events-none">
-            <div 
+            <div
               className="absolute w-2 h-2 rounded-full bg-accent animate-shimmer"
               style={{ top: '20%', left: '15%' }}
             />
-            <div 
+            <div
               className="absolute w-1.5 h-1.5 rounded-full bg-accent animate-shimmer"
               style={{ top: '35%', right: '20%', animationDelay: '1s' }}
             />
           </div>
         )}
 
-        {/* Menu Button - Modern Design */}
+        {/* Menu Button */}
         <button
           onClick={(e) => {
             e.stopPropagation();
             setShowMenu(true);
           }}
-          className="absolute top-4 right-4 w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/90 to-primary/70 backdrop-blur-sm shadow-lg flex items-center justify-center text-primary-foreground hover:scale-105 active:scale-95 transition-all duration-200 z-10"
+          className="absolute top-4 right-4 w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/90 to-primary/70 backdrop-blur-sm shadow-lg flex items-center justify-center text-primary-foreground hover:scale-105 active:scale-95 transition-all duration-200 z-20"
           aria-label="Menu"
         >
           <Menu size={24} />
         </button>
+
+        {/* Streichel-Button unten */}
+        <button
+          onClick={handlePet}
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white text-black p-3 rounded-full shadow-md flex items-center justify-center z-20 hover:bg-gray-100 transition"
+          style={{ pointerEvents: 'auto' }}
+          title={`Gestreichelt: ${petCount} mal`}
+        >
+          🐼 <span className="ml-1 text-sm font-bold">{petCount}</span>
+        </button>
       </div>
 
       {/* Menu Panel */}
-      <MenuPanel 
+      <MenuPanel
         isOpen={showMenu}
         onClose={() => setShowMenu(false)}
         onShowMessage={() => setShowInfo(true)}
         timeOfDay={timeOfDay}
       />
 
-      {/* Info Box Overlay */}
-      <InfoBox 
-        isOpen={showInfo} 
-        onClose={() => setShowInfo(false)} 
+      {/* Info Box */}
+      <InfoBox
+        isOpen={showInfo}
+        onClose={() => setShowInfo(false)}
         text={INFO_TEXT}
         timeOfDay={timeOfDay}
       />
