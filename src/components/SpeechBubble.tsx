@@ -5,6 +5,7 @@ type TimeOfDay = 'morning' | 'day' | 'evening' | 'night';
 interface SpeechBubbleProps {
   timeOfDay: TimeOfDay;
   holiday?: Holiday;
+  idleMessage?: string | null;
 }
 
 const messages: Record<TimeOfDay, string[]> = {
@@ -74,8 +75,9 @@ function getRandomMessage(timeOfDay: TimeOfDay, holiday?: Holiday): string {
   return timeMessages[Math.floor(Math.random() * timeMessages.length)];
 }
 
-export default function SpeechBubble({ timeOfDay, holiday }: SpeechBubbleProps) {
-  const message = getRandomMessage(timeOfDay, holiday);
+export default function SpeechBubble({ timeOfDay, holiday, idleMessage }: SpeechBubbleProps) {
+  // Idle-Nachricht hat Priorität
+  const message = idleMessage || getRandomMessage(timeOfDay, holiday);
 
   return (
     <div className="absolute bottom-[35%] left-1/2 -translate-x-1/2 z-10 animate-scale-in">

@@ -9,6 +9,7 @@ import SpeechBubble from './SpeechBubble';
 import MenuPanel from './MenuPanel';
 import HolidayEffects from './HolidayEffects';
 import { getCurrentHoliday, getHolidayEmoji, type Holiday } from '@/hooks/useHoliday';
+import { useIdleAnimation, getIdleMessage } from './IdleAnimation';
 
 type TimeOfDay = 'morning' | 'day' | 'evening' | 'night';
 
@@ -86,7 +87,12 @@ export default function PixelScene() {
     setTimeout(() => setPetReaction(false), 900);
   }, []);
 
+  // Idle Animation Hook
+  const { idleState, idleImage } = useIdleAnimation(isIdle);
+  const idleMessage = getIdleMessage(idleState);
+
   const currentScene = scenes[timeOfDay];
+  const displayImage = idleImage || currentScene;
   const isNight = timeOfDay === 'night';
 
   return (
@@ -95,12 +101,13 @@ export default function PixelScene() {
       <div className="relative w-full h-full overflow-hidden">
         {/* Scene Image with Idle Animation */}
         <img
-          src={currentScene}
+          src={displayImage}
           alt="Balu the Panda"
           className={`
             w-full h-full object-cover pixel-perfect
             ${loaded ? 'animate-scene-fade' : 'opacity-0'}
-            ${tapped ? 'animate-gentle-pulse' : isIdle ? 'animate-idle' : 'animate-breathe'}
+            ${tapped ? 'animate-gentle-pulse' : idleState === 'normal' ? 'animate-breathe' : ''}
+            ${idleImage ? 'animate-scale-in' : ''}
           `}
           onLoad={() => setLoaded(true)}
           draggable={false}
@@ -123,8 +130,14 @@ export default function PixelScene() {
           </div>
         )}
 
-        {/* Speech Bubble */}
-        {loaded && <SpeechBubble timeOfDay={timeOfDay} holiday={holiday} />}
+        {/* Speech Bubble - show idle message or regular */}
+        {loaded && (
+          <SpeechBubble 
+            timeOfDay={timeOfDay} 
+            holiday={holiday} 
+            idleMessage={idleMessage}
+          />
+        )}
 
         {/* Fireflies (Night only) */}
         {isNight && <Fireflies />}
