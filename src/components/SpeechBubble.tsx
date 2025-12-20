@@ -1,7 +1,10 @@
+import { Holiday } from '@/hooks/useHoliday';
+
 type TimeOfDay = 'morning' | 'day' | 'evening' | 'night';
 
 interface SpeechBubbleProps {
   timeOfDay: TimeOfDay;
+  holiday?: Holiday;
 }
 
 const messages: Record<TimeOfDay, string[]> = {
@@ -31,14 +34,48 @@ const messages: Record<TimeOfDay, string[]> = {
   ],
 };
 
-function getRandomMessage(timeOfDay: TimeOfDay): string {
+const holidayMessages: Record<string, string[]> = {
+  christmas: [
+    "Wesołych Świąt! 🎄",
+    "Ho ho ho! 🎅",
+    "Pada śnieg! ❄️",
+    "Kocham Święta! 🎁",
+  ],
+  easter: [
+    "Wesołych Świąt! 🐰",
+    "Szukam jajek! 🥚",
+    "Wiosna jest piękna! 🌷",
+    "Wesołego Alleluja! 🐣",
+  ],
+  valentines: [
+    "Kocham Cię! 💕",
+    "Jesteś moim sercem! 💝",
+    "Walentynki! 💗",
+    "Przytulam Cię mocno! 🤗",
+  ],
+  newyear: [
+    "Szczęśliwego Nowego Roku! 🎆",
+    "Nowy rok, nowe przygody! ✨",
+    "Do siego roku! 🎇",
+    "Sylwester! 🥳",
+  ],
+};
+
+function getRandomMessage(timeOfDay: TimeOfDay, holiday?: Holiday): string {
+  // Wenn Feiertag, zeige Feiertags-Nachrichten mit 60% Wahrscheinlichkeit
+  if (holiday && Math.random() < 0.6) {
+    const holidayMsgs = holidayMessages[holiday];
+    if (holidayMsgs) {
+      return holidayMsgs[Math.floor(Math.random() * holidayMsgs.length)];
+    }
+  }
+  
   const timeMessages = messages[timeOfDay];
-  const randomIndex = Math.floor(Math.random() * timeMessages.length);
-  return timeMessages[randomIndex];
+  return timeMessages[Math.floor(Math.random() * timeMessages.length)];
 }
 
-export default function SpeechBubble({ timeOfDay }: SpeechBubbleProps) {
-  const message = getRandomMessage(timeOfDay);
+export default function SpeechBubble({ timeOfDay, holiday }: SpeechBubbleProps) {
+  const message = getRandomMessage(timeOfDay, holiday);
 
   return (
     <div className="absolute bottom-[35%] left-1/2 -translate-x-1/2 z-10 animate-scale-in">
