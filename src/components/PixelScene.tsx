@@ -7,6 +7,8 @@ import sceneNight from '@/assets/scene-night.png';
 import InfoBox from './InfoBox';
 import SpeechBubble from './SpeechBubble';
 import MenuPanel from './MenuPanel';
+import HolidayEffects from './HolidayEffects';
+import { getCurrentHoliday, getHolidayEmoji, type Holiday } from '@/hooks/useHoliday';
 
 type TimeOfDay = 'morning' | 'day' | 'evening' | 'night';
 
@@ -48,19 +50,28 @@ export default function PixelScene() {
   const [showInfo, setShowInfo] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [petReaction, setPetReaction] = useState(false);
+  const [holiday, setHoliday] = useState<Holiday>(getCurrentHoliday);
+  const [isIdle, setIsIdle] = useState(true);
   const [petCount, setPetCount] = useState<number>(() => {
     const saved = localStorage.getItem('petCount');
     return saved ? parseInt(saved, 10) : 0;
   });
-
   useEffect(() => {
     const interval = setInterval(() => {
       setTimeOfDay(getTimeOfDay());
+      setHoliday(getCurrentHoliday());
     }, 60000);
 
     setShowSurprise(shouldShowSurprise());
     return () => clearInterval(interval);
   }, []);
+
+  // Idle-Timer: Nach 5 Sekunden ohne Interaktion wird Idle aktiviert
+  useEffect(() => {
+    setIsIdle(false);
+    const idleTimer = setTimeout(() => setIsIdle(true), 5000);
+    return () => clearTimeout(idleTimer);
+  }, [tapped, petReaction]);
 
   const handlePet = useCallback(() => {
     setTapped(true);
@@ -82,18 +93,28 @@ export default function PixelScene() {
     <div className="relative w-full h-full flex items-center justify-center bg-[hsl(var(--background))]">
       {/* Scene Container – Fullscreen */}
       <div className="relative w-full h-full overflow-hidden">
-        {/* Scene Image */}
+        {/* Scene Image with Idle Animation */}
         <img
           src={currentScene}
           alt="Balu the Panda"
           className={`
             w-full h-full object-cover pixel-perfect
             ${loaded ? 'animate-scene-fade' : 'opacity-0'}
-            ${tapped ? 'animate-gentle-pulse' : 'animate-breathe'}
+            ${tapped ? 'animate-gentle-pulse' : isIdle ? 'animate-idle' : 'animate-breathe'}
           `}
           onLoad={() => setLoaded(true)}
           draggable={false}
         />
+
+        {/* Holiday Effects */}
+        {holiday && <HolidayEffects holiday={holiday} />}
+
+        {/* Holiday Badge */}
+        {holiday && (
+          <div className="absolute top-4 left-4 z-20 bg-card/80 backdrop-blur-sm px-3 py-1.5 rounded-full border border-border/30 shadow-lg animate-scale-in">
+            <span className="text-lg">{getHolidayEmoji(holiday)}</span>
+          </div>
+        )}
 
         {/* ❤️ Herz-Reaktion beim Streicheln */}
         {petReaction && (
@@ -103,7 +124,7 @@ export default function PixelScene() {
         )}
 
         {/* Speech Bubble */}
-        {loaded && <SpeechBubble timeOfDay={timeOfDay} />}
+        {loaded && <SpeechBubble timeOfDay={timeOfDay} holiday={holiday} />}
 
         {/* Fireflies (Night only) */}
         {isNight && <Fireflies />}
