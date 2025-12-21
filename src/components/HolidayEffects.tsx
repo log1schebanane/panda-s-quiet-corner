@@ -21,19 +21,21 @@ export default function HolidayEffects({ holiday }: HolidayEffectsProps) {
   }
 }
 
-function Snowflakes() {
-  const flakes = Array.from({ length: 20 }, (_, i) => ({
-    left: `${Math.random() * 100}%`,
-    delay: `${Math.random() * 5}s`,
-    duration: `${3 + Math.random() * 4}s`,
-    size: Math.random() > 0.5 ? 'text-lg' : 'text-sm',
-  }));
+// Statische Schneeflocken-Konfiguration um Re-Render zu vermeiden
+const SNOWFLAKES = Array.from({ length: 20 }, (_, i) => ({
+  id: i,
+  left: `${(i * 5) % 100}%`,
+  delay: `${(i * 0.25) % 5}s`,
+  duration: `${3 + (i % 4)}s`,
+  size: i % 2 === 0 ? 'text-lg' : 'text-sm',
+}));
 
+function Snowflakes() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-30">
-      {flakes.map((flake, i) => (
+      {SNOWFLAKES.map((flake) => (
         <div
-          key={i}
+          key={flake.id}
           className={`absolute ${flake.size} animate-snowfall`}
           style={{
             left: flake.left,
