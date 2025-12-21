@@ -7,9 +7,11 @@ import sceneNight from '@/assets/scene-night.png';
 import InfoBox from './InfoBox';
 import SpeechBubble from './SpeechBubble';
 import MenuPanel from './MenuPanel';
+import StatsPanel from './StatsPanel';
 import HolidayEffects from './HolidayEffects';
 import { getCurrentHoliday, getHolidayEmoji, type Holiday } from '@/hooks/useHoliday';
 import { useIdleAnimation, getIdleMessage } from './IdleAnimation';
+import { useVisitStats } from '@/hooks/useVisitStats';
 
 type TimeOfDay = 'morning' | 'day' | 'evening' | 'night';
 
@@ -50,13 +52,14 @@ export default function PixelScene() {
   const [loaded, setLoaded] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [showStats, setShowStats] = useState(false);
   const [petReaction, setPetReaction] = useState(false);
   const [holiday, setHoliday] = useState<Holiday>(getCurrentHoliday);
   const [isIdle, setIsIdle] = useState(true);
-  const [petCount, setPetCount] = useState<number>(() => {
-    const saved = localStorage.getItem('petCount');
-    return saved ? parseInt(saved, 10) : 0;
-  });
+
+  // Visit Stats Hook
+  const { stats, isNewDay, incrementPetCount, daysSinceFirstVisit } = useVisitStats();
+
   useEffect(() => {
     const interval = setInterval(() => {
       setTimeOfDay(getTimeOfDay());
@@ -77,15 +80,11 @@ export default function PixelScene() {
   const handlePet = useCallback(() => {
     setTapped(true);
     setPetReaction(true);
-    setPetCount((prev) => {
-      const next = prev + 1;
-      localStorage.setItem('petCount', next.toString());
-      return next;
-    });
+    incrementPetCount();
 
     setTimeout(() => setTapped(false), 600);
     setTimeout(() => setPetReaction(false), 900);
-  }, []);
+  }, [incrementPetCount]);
 
   // Idle Animation Hook - nur für Overlay-Effekte, keine Bildwechsel
   const { idleState } = useIdleAnimation(isIdle);
@@ -182,10 +181,21 @@ export default function PixelScene() {
         <button
           onClick={handlePet}
           className="absolute top-1/2 right-4 -translate-y-1/2 bg-white text-black p-3 rounded-full shadow-md flex items-center justify-center z-20 hover:bg-gray-100 transition"
-          title={`Gestreichelt: ${petCount} mal`}
+          title={`Gestreichelt: ${stats.petCount} mal`}
         >
-          🐼 <span className="ml-1 text-sm font-bold">{petCount}</span>
+          🐼 <span className="ml-1 text-sm font-bold">{stats.petCount}</span>
         </button>
+
+        {/* New Day Notification */}
+        {isNewDay && (
+          <div className="absolute top-20 left-1/2 -translate-x-1/2 z-30 animate-scale-in">
+            <div className="bg-gradient-to-r from-primary/90 to-accent/90 px-4 py-2 rounded-full shadow-lg">
+              <span className="text-primary-foreground font-medium text-sm">
+                🎉 Willkommen zurück! Streak: {stats.currentStreak} {stats.currentStreak === 1 ? 'Tag' : 'Tage'}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Menu Panel */}
@@ -193,7 +203,16 @@ export default function PixelScene() {
         isOpen={showMenu}
         onClose={() => setShowMenu(false)}
         onShowMessage={() => setShowInfo(true)}
+        onShowStats={() => setShowStats(true)}
         timeOfDay={timeOfDay}
+      />
+
+      {/* Stats Panel */}
+      <StatsPanel
+        isOpen={showStats}
+        onClose={() => setShowStats(false)}
+        stats={stats}
+        daysSinceFirstVisit={daysSinceFirstVisit}
       />
 
       {/* Info Box */}

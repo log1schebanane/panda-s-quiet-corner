@@ -1,4 +1,4 @@
-import { X, Heart, Info } from 'lucide-react';
+import { X, Heart, Info, BarChart3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 type TimeOfDay = 'morning' | 'day' | 'evening' | 'night';
@@ -7,6 +7,7 @@ interface MenuPanelProps {
   isOpen: boolean;
   onClose: () => void;
   onShowMessage: () => void;
+  onShowStats: () => void;
   timeOfDay: TimeOfDay;
 }
 
@@ -33,7 +34,7 @@ const timeColors: Record<TimeOfDay, { bg: string; border: string; accent: string
   },
 };
 
-export default function MenuPanel({ isOpen, onClose, onShowMessage, timeOfDay }: MenuPanelProps) {
+export default function MenuPanel({ isOpen, onClose, onShowMessage, onShowStats, timeOfDay }: MenuPanelProps) {
   const colors = timeColors[timeOfDay];
   const isNight = timeOfDay === 'night';
   const navigate = useNavigate();
@@ -80,10 +81,22 @@ export default function MenuPanel({ isOpen, onClose, onShowMessage, timeOfDay }:
             <span className="font-medium">Wiadomość dla Ciebie</span>
           </button>
 
+          {/* Statistik */}
+          <button
+            onClick={() => {
+              onShowStats();
+              onClose();
+            }}
+            className={`w-full flex items-center gap-3 p-4 rounded-2xl transition-all duration-200 ${isNight ? 'bg-indigo-800/40 hover:bg-indigo-700/50 text-indigo-100' : 'bg-white/60 hover:bg-white/80 text-gray-700'}`}
+          >
+            <BarChart3 className={colors.accent} size={22} />
+            <span className="font-medium">Statistik</span>
+          </button>
+
           {/* J+J Seite */}
           <button
             onClick={() => {
-              navigate("/jj"); // öffnet die J+J-Seite
+              navigate("/jj");
               onClose();
             }}
             className={`w-full flex items-center gap-3 p-4 rounded-2xl transition-all duration-200 ${isNight ? 'bg-indigo-800/40 hover:bg-indigo-700/50 text-indigo-100' : 'bg-white/60 hover:bg-white/80 text-gray-700'}`}
