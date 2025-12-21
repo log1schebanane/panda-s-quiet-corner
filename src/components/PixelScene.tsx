@@ -87,31 +87,41 @@ export default function PixelScene() {
     setTimeout(() => setPetReaction(false), 900);
   }, []);
 
-  // Idle Animation Hook
-  const { idleState, idleImage } = useIdleAnimation(isIdle);
+  // Idle Animation Hook - nur für Overlay-Effekte, keine Bildwechsel
+  const { idleState } = useIdleAnimation(isIdle);
   const idleMessage = getIdleMessage(idleState);
 
   const currentScene = scenes[timeOfDay];
-  const displayImage = idleImage || currentScene;
   const isNight = timeOfDay === 'night';
 
   return (
     <div className="relative w-full h-full flex items-center justify-center bg-[hsl(var(--background))]">
       {/* Scene Container – Fullscreen */}
       <div className="relative w-full h-full overflow-hidden">
-        {/* Scene Image with Idle Animation */}
+        {/* Scene Image */}
         <img
-          src={displayImage}
+          src={currentScene}
           alt="Balu the Panda"
           className={`
             w-full h-full object-cover pixel-perfect
             ${loaded ? 'animate-scene-fade' : 'opacity-0'}
-            ${tapped ? 'animate-gentle-pulse' : idleState === 'normal' ? 'animate-breathe' : ''}
-            ${idleImage ? 'animate-scale-in' : ''}
+            ${tapped ? 'animate-gentle-pulse' : 'animate-breathe'}
           `}
           onLoad={() => setLoaded(true)}
           draggable={false}
         />
+
+        {/* Idle Overlay-Effekte (Emojis) */}
+        {idleState !== 'normal' && (
+          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 pointer-events-none z-20 animate-scale-in">
+            <span className="text-4xl drop-shadow-lg">
+              {idleState === 'sleep' && '💤'}
+              {idleState === 'yawn' && '😴'}
+              {idleState === 'stretch' && '✨'}
+              {idleState === 'wave' && '👋'}
+            </span>
+          </div>
+        )}
 
         {/* Holiday Effects */}
         {holiday && <HolidayEffects holiday={holiday} />}

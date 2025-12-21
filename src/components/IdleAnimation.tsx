@@ -1,22 +1,6 @@
 import { useState, useEffect } from 'react';
-import baluYawn from '@/assets/balu-yawn.png';
-import baluStretch from '@/assets/balu-stretch.png';
-import baluSleep from '@/assets/balu-sleep.png';
-import baluWave from '@/assets/balu-wave.png';
 
 export type IdleState = 'normal' | 'yawn' | 'stretch' | 'sleep' | 'wave';
-
-interface IdleAnimationProps {
-  isIdle: boolean;
-  onStateChange?: (state: IdleState) => void;
-}
-
-const idleImages: Record<Exclude<IdleState, 'normal'>, string> = {
-  yawn: baluYawn,
-  stretch: baluStretch,
-  sleep: baluSleep,
-  wave: baluWave,
-};
 
 const idleStates: Exclude<IdleState, 'normal'>[] = ['yawn', 'stretch', 'sleep', 'wave'];
 
@@ -27,12 +11,10 @@ const PAUSE_BETWEEN = 8000;
 
 export function useIdleAnimation(isIdle: boolean) {
   const [idleState, setIdleState] = useState<IdleState>('normal');
-  const [idleImage, setIdleImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isIdle) {
       setIdleState('normal');
-      setIdleImage(null);
       return;
     }
 
@@ -43,12 +25,10 @@ export function useIdleAnimation(isIdle: boolean) {
       // Wähle zufällige Idle-Animation
       const randomState = idleStates[Math.floor(Math.random() * idleStates.length)];
       setIdleState(randomState);
-      setIdleImage(idleImages[randomState]);
 
       // Nach ANIMATION_DURATION zurück zu normal
       animationTimeout = setTimeout(() => {
         setIdleState('normal');
-        setIdleImage(null);
 
         // Nach PAUSE_BETWEEN nächste Animation
         pauseTimeout = setTimeout(playRandomAnimation, PAUSE_BETWEEN);
@@ -64,7 +44,7 @@ export function useIdleAnimation(isIdle: boolean) {
     };
   }, [isIdle]);
 
-  return { idleState, idleImage };
+  return { idleState };
 }
 
 export function getIdleMessage(state: IdleState): string | null {
