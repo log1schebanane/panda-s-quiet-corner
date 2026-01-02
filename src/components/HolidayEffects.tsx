@@ -51,19 +51,11 @@ function Snowflakes() {
 }
 
 function EasterEggs() {
-  const eggs = ['🥚', '🐣', '🐰', '🌷', '🌸'];
-  const items = Array.from({ length: 8 }, (_, i) => ({
-    emoji: eggs[Math.floor(Math.random() * eggs.length)],
-    left: `${10 + Math.random() * 80}%`,
-    top: `${60 + Math.random() * 30}%`,
-    delay: `${Math.random() * 2}s`,
-  }));
-
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-30">
-      {items.map((item, i) => (
+      {EASTER_ITEMS.map((item) => (
         <div
-          key={i}
+          key={item.id}
           className="absolute text-2xl animate-easter-bounce"
           style={{
             left: item.left,
@@ -78,19 +70,24 @@ function EasterEggs() {
   );
 }
 
-function Hearts() {
-  const hearts = Array.from({ length: 15 }, (_, i) => ({
-    left: `${Math.random() * 100}%`,
-    delay: `${Math.random() * 4}s`,
-    duration: `${4 + Math.random() * 3}s`,
-    size: Math.random() > 0.6 ? 'text-xl' : 'text-sm',
-  }));
+// Statische Konfigurationen, damit Streicheln/State-Updates Animationen nicht "neu würfeln"
+const EASTER_ITEMS = Array.from({ length: 8 }, (_, i) => {
+  const eggs = ['🥚', '🐣', '🐰', '🌷', '🌸'] as const;
+  return {
+    id: i,
+    emoji: eggs[i % eggs.length],
+    left: `${10 + ((i * 11) % 80)}%`,
+    top: `${62 + ((i * 7) % 28)}%`,
+    delay: `${(i * 0.25) % 2}s`,
+  };
+});
 
+function Hearts() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-30">
-      {hearts.map((heart, i) => (
+      {HEART_ITEMS.map((heart) => (
         <div
-          key={i}
+          key={heart.id}
           className={`absolute ${heart.size} animate-hearts-float`}
           style={{
             left: heart.left,
@@ -105,20 +102,20 @@ function Hearts() {
   );
 }
 
-function Fireworks() {
-  const sparks = ['✨', '🎆', '🎇', '⭐'];
-  const items = Array.from({ length: 12 }, (_, i) => ({
-    emoji: sparks[Math.floor(Math.random() * sparks.length)],
-    left: `${Math.random() * 100}%`,
-    top: `${Math.random() * 60}%`,
-    delay: `${Math.random() * 3}s`,
-  }));
+const HEART_ITEMS = Array.from({ length: 15 }, (_, i) => ({
+  id: i,
+  left: `${(i * 7) % 100}%`,
+  delay: `${(i * 0.33) % 4}s`,
+  duration: `${4 + ((i * 0.41) % 3)}s`,
+  size: i % 5 === 0 ? 'text-xl' : 'text-sm',
+}));
 
+function Fireworks() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-30">
-      {items.map((item, i) => (
+      {FIREWORK_ITEMS.map((item) => (
         <div
-          key={i}
+          key={item.id}
           className="absolute text-2xl animate-firework-burst"
           style={{
             left: item.left,
@@ -132,3 +129,14 @@ function Fireworks() {
     </div>
   );
 }
+
+const FIREWORK_ITEMS = Array.from({ length: 12 }, (_, i) => {
+  const sparks = ['✨', '🎆', '🎇', '⭐'] as const;
+  return {
+    id: i,
+    emoji: sparks[i % sparks.length],
+    left: `${(i * 9) % 100}%`,
+    top: `${(i * 13) % 60}%`,
+    delay: `${(i * 0.27) % 3}s`,
+  };
+});
