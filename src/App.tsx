@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
 import Index from "./pages/Index";
 import JJPage from "./pages/JJPage";
+import BlumenPage from "./pages/BlumenPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -18,7 +19,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/jj" element={<JJPage />} />  {/* Neue Seite */}
+          <Route path="/jj" element={<JJPage />} />
+          <Route path="/blumen" element={<BlumenPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

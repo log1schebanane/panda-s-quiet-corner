@@ -170,3 +170,29 @@ CSS Variables
   50% { opacity: 0.3; }
 }
 .animate-idle-blink { animation: idle-blink 4s ease-in-out infinite; }
+
+/* ===== Blumen-Seite Animationen ===== */
+@keyframes rose-bloom {
+  0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+  50% { transform: scale(1.2) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.animate-rose-bloom { animation: rose-bloom 1s ease-out forwards; }
+
+@keyframes leaf-sway {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+.animate-leaf-sway { animation: leaf-sway 3s ease-in-out infinite; }
+
+@keyframes subtle-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+.animate-subtle-float { animation: subtle-float 4s ease-in-out infinite; }
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: 1; transform: scale(1); }
+}
+.animate-sparkle { animation: sparkle 2s ease-in-out infinite; }

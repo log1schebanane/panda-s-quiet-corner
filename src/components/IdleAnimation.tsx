@@ -50,13 +50,13 @@ export function useIdleAnimation(isIdle: boolean) {
 export function getIdleMessage(state: IdleState): string | null {
   switch (state) {
     case 'yawn':
-      return 'Ziewam... 😴';
+      return 'Zieeew... 😴';
     case 'stretch':
-      return 'Rozciągam się! 💪';
+      return 'Stretch! 💪';
     case 'sleep':
-      return 'Śpię... 💤';
+      return 'Zzz... 💤';
     case 'wave':
-      return 'Cześć! 👋';
+      return 'Hej! 👋';
     default:
       return null;
   }
