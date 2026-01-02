@@ -71,11 +71,12 @@ export default function PixelScene() {
   }, []);
 
   // Idle-Timer: Nach 5 Sekunden ohne Interaktion wird Idle aktiviert
+  // Nur tapped und petReaction triggern den Reset, NICHT holiday effects
   useEffect(() => {
     setIsIdle(false);
     const idleTimer = setTimeout(() => setIsIdle(true), 5000);
     return () => clearTimeout(idleTimer);
-  }, [tapped, petReaction]);
+  }, [tapped]);
 
   const handlePet = useCallback(() => {
     setTapped(true);

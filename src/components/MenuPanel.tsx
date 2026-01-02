@@ -1,4 +1,4 @@
-import { X, Heart, Info, BarChart3 } from 'lucide-react';
+import { X, Heart, Info, BarChart3, Flower2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 type TimeOfDay = 'morning' | 'day' | 'evening' | 'night';
@@ -103,6 +103,18 @@ export default function MenuPanel({ isOpen, onClose, onShowMessage, onShowStats,
           >
             <Heart className={colors.accent} size={22} />
             <span className="font-medium">J+J</span>
+          </button>
+
+          {/* Blumen für dich */}
+          <button
+            onClick={() => {
+              navigate("/blumen");
+              onClose();
+            }}
+            className={`w-full flex items-center gap-3 p-4 rounded-2xl transition-all duration-200 ${isNight ? 'bg-indigo-800/40 hover:bg-indigo-700/50 text-indigo-100' : 'bg-white/60 hover:bg-white/80 text-gray-700'}`}
+          >
+            <Flower2 className={colors.accent} size={22} />
+            <span className="font-medium">Blumen für dich</span>
           </button>
 
           {/* Info Box */}
